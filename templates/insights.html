@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block head %} 
+    <link href="{{ url_for('static', filename='css/insights.css') }}" rel="stylesheet"/>
+    <script src="{{ url_for('static', filename='js/index.js') }}"></script>
+ {% endblock %}
+
+{% block title %}My Fashion Insights {% endblock %}
+{% block content %}
+<div class="container">
+    
+
+    <div class="row mb-4">
+        <!-- Section 1 (Insight Content) -->
+        <div class="col-md-6">
+            <div class="p-3 rounded-3 text-white shadow-custom scroll-container">
+                <h5 class="text-center">Insights and Recoomendation</h5>
+                <div class="scroll-content">
+                    {{ insight | safe }}
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2 (Scrollable Image Cards - Vertical) -->
+        <div class="col-md-6">
+            <div class="p-3 rounded-3 text-white shadow-custom scroll-container">
+                <h5 class="text-center">Trending Styles</h5>
+                <div class="scroll-content">
+                    {% if images %}
+                        {% for img in images %}
+                            <div class="custom-card">
+                                <div class="image-container">
+                                    <img src="{{ img[3] }}" alt="Image">
+                                </div>
+                                <p class="text-center text-white"> ₹{{img[5]}}</p>
+                                <button class="add-to-cart-btn" onclick="addToCart('{{ img[0] }}','Style - {{ img[0] }}', '{{ img[3] }}' ,'{{img[5]}}')">Add to Cart</button>
+                                
+
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="text-center">No images available</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

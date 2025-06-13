@@ -1,0 +1,72 @@
+<div class="container">
+  <header class="d-flex flex-wrap align-items-center justify-content-center justify-content-md-between py-3 mb-4 border-bottom">
+    <div class="col-md-3 mb-2 mb-md-0">
+      <a href="/" class="d-inline-flex link-body-emphasis text-decoration-none">
+        <img src="{{url_for('static', filename='site/logo.jpg')}}" class="site-logo" alt="Site Logo"/>
+      </a>
+    </div>
+  
+    <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
+      <li><a href="{{ url_for('home') }}" class="nav-link px-2 link-secondary text-white">Home</a></li>
+      <li><a href="{{ url_for('clothes') }}" class="nav-link px-2 text-white">Insights</a></li>
+      <li><a href="{{ url_for('orders') }}" class="nav-link px-2 text-white">Orders</a></li>
+      <li><a href="{{ url_for('about') }}" class="nav-link px-2 text-white">About</a></li>
+      {% if user and admin %}
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-white" href="#" id="adminDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Admin
+            </a>
+            <ul class="dropdown-menu" aria-labelledby="adminDropdown">
+                <li><a class="dropdown-item" href="{{ url_for('admin-orders') }}">Handel Orders</a></li>
+                <li><a class="dropdown-item" href="{{ url_for('admin-manage') }}">Add Information</a></li>
+            </ul>
+        </li>
+      {% endif %}
+    </ul>
+  
+    <div class="col-md-3 text-end d-flex align-items-center">
+      <!-- Cart Button -->
+      <button type="button" class="btn btn-outline-light me-3 position-relative" data-bs-toggle="modal" data-bs-target="#cartModal" onclick="updateCartModal()">
+        <i class="bi bi-cart"></i>
+        <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+      </button>
+      {% if not user %}
+        <a href="{{ url_for('login') }}">
+          <button type="button" class="btn btn-primary me-2 btn-custom">Login</button>
+        </a>
+        
+        <a href="{{ url_for('signup') }}">
+          <button type="button" class="btn btn-primary btn-custom">Sign-up</button>
+        </a>
+      {% else %}
+        <a href="">
+          <button type="button" class="btn btn-primary me-2 btn-custom" onclick="logoutUser()">Logout</button>
+        </a>
+      {% endif %}
+    </div>
+  </header>
+  
+
+<!-- Cart Modal -->
+<div class="modal fade" id="cartModal" tabindex="-1" aria-labelledby="cartModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header  text-white">
+              <h5 class="modal-title text-dark" id="cartModalLabel">🛒 Your Shopping Cart</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+              <ul id="cart-items" class="list-group">
+                  <p class="text-center text-muted">Your cart is empty.</p>
+              </ul>
+          </div>
+          <div class="modal-footer">
+              <span id="cart-total" class="fs-5 fw-bold text-dark">Total: $0.00</span>
+              <button id="checkout-btn" type="button" class="btn btn-success" onclick="goToCheckout()" disabled>Checkout</button>
+
+          </div>
+      </div>
+  </div>
+</div>
+  
+</div>

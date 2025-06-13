@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5 shadow-box"> 
+        <h1 class="display-5  fw-bold  text-white lh-1 mb-3 text-center">Admin Panel</h1>
+        <div class="row mt-5">
+            <div class="col">
+                <h2 class="text-white">Orders</h2>
+                <table class="table table-light table-striped">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer Email</th>
+                            <th>Order Date</th>
+                            <th>Total Price</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr>
+                            <td>{{ order.order_id }}</td>
+                            <td>{{ order.email }}</td>
+                            <td>{{ order.ordered_at }}</td>
+                            <td>₹{{ order.total_price }}</td>
+                            <td><span class="badge bg-{% if order.status == 'Pending' %}warning{% elif order.status == 'Approved' %}success{% else %}danger{% endif %}">{{ order.status }}</span></td>
+                            <td>
+                                <button class="btn btn-success btn-sm" onclick="updateOrderStatus({{ order.order_id }}, 'Approved')">Approve</button>
+                                <button class="btn btn-danger btn-sm" onclick="updateOrderStatus({{ order.order_id }}, 'Rejected')">Reject</button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    
+</div>
+
+<script>
+function updateOrderStatus(orderId, status) {
+    fetch("/admin/orders/update", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ order_id: orderId, status: status })
+    })
+    .then(response => response.json())
+    .then(data => {
+        alert(data.message);
+        location.reload();
+    })
+    .catch(error => console.error("Error:", error));
+}
+</script>
+{% endblock %}

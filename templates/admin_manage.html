@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="card shadow-custom p-4">
+        <center>
+            <h2 class="text-white">Admin Panel - Manage Categories, Occasions & Seasons</h2>
+        </center>
+
+        <!-- Add Category Form -->
+        <form id="categoryForm" class="mt-3">
+            <label class="text-white">Add Category</label>
+            <input type="text" id="category_name" class="form-control" placeholder="Enter category name" required>
+            <button type="submit" class="btn btn-custom mt-2">Add Category</button>
+        </form>
+        <div id="categoryMsg" class="mt-2 text-white"></div>
+
+        <!-- Add Occasion Form -->
+        <form id="occasionForm" class="mt-3">
+            <label class="text-white">Add Occasion</label>
+            <input type="text" id="occasion_name" class="form-control" placeholder="Enter occasion name" required>
+            <button type="submit" class="btn btn-custom mt-2">Add Occasion</button>
+        </form>
+        <div id="occasionMsg" class="mt-2 text-white"></div>
+
+        <!-- Add Season Form -->
+        <form id="seasonForm" class="mt-3">
+            <label class="text-white">Add Season</label>
+            <input type="text" id="season_name" class="form-control" placeholder="Enter season name" required>
+            <button type="submit" class="btn btn-custom mt-2">Add Season</button>
+        </form>
+        <div id="seasonMsg" class="mt-2 text-white"></div>
+    </div>
+</div>
+
+<script>
+async function submitForm(event, formId, endpoint, inputId, msgId) {
+    event.preventDefault();
+    const input = document.getElementById(inputId);
+    const msgBox = document.getElementById(msgId);
+    msgBox.innerHTML = "";
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ [inputId]: input.value })
+    });
+
+    const result = await response.json();
+    if (response.ok) {
+        msgBox.innerHTML = `<span class="text-success">${result.message}</span>`;
+        input.value = "";
+    } else {
+        msgBox.innerHTML = `<span class="text-danger">${result.error}</span>`;
+    }
+}
+
+document.getElementById("categoryForm").addEventListener("submit", (e) => 
+    submitForm(e, "categoryForm", "/api/add-category", "category_name", "categoryMsg"));
+
+document.getElementById("occasionForm").addEventListener("submit", (e) => 
+    submitForm(e, "occasionForm", "/api/insert-occasion", "occasion_name", "occasionMsg"));
+
+document.getElementById("seasonForm").addEventListener("submit", (e) => 
+    submitForm(e, "seasonForm", "/api/add-season", "season_name", "seasonMsg"));
+</script>
+
+{% endblock %}

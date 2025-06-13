@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container col-xxl-8 px-4 py-5">
+    <div class="row flex-lg-row-reverse align-items-center g-5 py-5 shadow-box">
+        <div class="col-10 col-sm-8 col-lg-6">
+          <img src="/static/site/logo.jpg" class="site-logo-1" alt="Site Logo" width="100" height="57">
+        </div>        
+        <div class="col-lg-6">
+          <h1 class="display-5  fw-bold  text-white lh-1 mb-3">Fashion Sense</h1>
+          <p class="lead text-white">Redefining style by transforming old into new, making sustainability the heart of your wardrobe, because great fashion shouldn’t cost the earth.</p>
+          <div class="d-grid gap-2 d-md-flex justify-content-md-start">
+            <a href="{{ url_for('clothes') }}" style="text-decoration: none; color: black;"><button type="button" class="btn btn-primary btn-lg px-4 me-md-2 btn-custom"> Insights</button></a>
+          </div>
+        </div>
+    </div>
+  </div>
+{% endblock %}

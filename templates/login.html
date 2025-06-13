@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow-custom">
+                <div class="card-body">
+                    <h3 class="text-center mb-4 text-white">Login</h3>
+
+                    <!-- Login Form -->
+                    <form id="loginForm">
+                        <!-- Email -->
+                        <div class="mb-3">
+                            <label for="email" class="form-label text-white">Email address</label>
+                            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+
+                        <!-- Password -->
+                        <div class="mb-3">
+                            <label for="password" class="form-label text-white">Password</label>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Enter your password">
+                        </div>
+
+                        <!-- Remember me -->
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                            <label class="form-check-label text-white" for="rememberMe">Remember me</label>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-custom">Login</button>
+                        </div>
+                    </form>
+
+                    <!-- Error Message -->
+                    <div id="errorMessage" class="text-danger text-center mt-3"></div>
+
+                    <hr>
+                    <div class="text-center">
+                        <a href="{{ url_for('forgot_password') }}" class="text-decoration-none text-white">Forgot your password?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("loginForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent default form submission
+
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const errorMessage = document.getElementById("errorMessage");
+
+    errorMessage.innerText = ""; // Clear previous errors
+
+    try {
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            localStorage.setItem("token", data.token); // Store JWT token
+            window.location.href = "{{ url_for('home') }}"; // Redirect after login
+        } else {
+            errorMessage.innerText = data.error || "Invalid email or password!";
+        }
+    } catch (error) {
+        console.error("Login error:", error);
+        errorMessage.innerText = "Something went wrong. Please try again.";
+    }
+});
+</script>
+{% endblock %}

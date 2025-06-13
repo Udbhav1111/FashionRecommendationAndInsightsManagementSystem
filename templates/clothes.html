@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-2">
+    <div class="card shadow-custom p-4">
+        <center>
+            <h2 class="text-white">Check Insights and Recommendation for Your Outfit</h2>
+        </center>
+        <form id="clothingForm"  action="{{ url_for('render_insights') }}" method="post" enctype="multipart/form-data">
+            <!-- Image File -->
+            <div class="mb-3">
+                <label for="image_url" class="form-label text-white">Picture of your Cloth</label>
+                <input type="file" class="form-control" id="image_url" name="image_url" accept="image/*" required>
+            </div>
+
+            <!-- Category -->
+            <div class="mb-3">
+                <label for="category" class="form-label text-white">Category</label>
+                <select class="form-select" id="category" name="category_id" required>
+                    <option selected disabled>Select Category</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.category_id }}">{{ cat.category_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Occasion -->
+            <div class="mb-3">
+                <label for="occasion" class="form-label text-white">Occasion</label>
+                <select class="form-select" id="occasion" name="occasion_id" required>
+                    <option selected disabled>Select Occasion</option>
+                    {% for occ in occasions %}
+                        <option value="{{ occ.occasion_name  }}">{{ occ.occasion_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <!-- Gender -->
+            <div class="mb-3">
+                <label for="gender" class="form-label text-white">Gender</label>
+                <select class="form-select" id="gender" name="gender" required>
+                    <option selected disabled>Select Gender</option>
+                        <option value="M">Male</option>
+                        <option value="F">Fe-Male</option>
+                    
+                </select>
+            </div>
+
+
+            <!-- Season -->
+            <div class="mb-3">
+                <label for="season" class="form-label text-white">Season</label>
+                <select class="form-select" id="season" name="season_id" required>
+                    <option selected disabled>Select Season</option>
+                    {% for sea in seasons %}
+                        <option value="{{ sea.season_id  }}">{{ sea.season_name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-3">
+                <label for="description" class="form-label text-white">Description</label>
+                <textarea class="form-control" id="description" name="description" rows="3" required></textarea>
+            </div>
+
+            <!-- Hidden user ID -->
+            <input type="hidden" name="user_id" value="1"> <!-- Replace with dynamic user ID if needed -->
+
+            <!-- Submit Button -->
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-custom">Check Now</button>
+            </div>
+        </form>
+
+        <!-- Result Message -->
+        <div id="resultMsg" class="mt-3 text-white"></div>
+
+        <!-- AI Insights -->
+        <div id="insightsBox" class="mt-4 p-3 bg-dark text-white rounded" style="display: none;">
+            <h4>✨ AI Recommendations & Insights</h4>
+            <div id="insightsContent" class="mt-2" style="white-space: pre-line;"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById("clothingForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent traditional form submission
+
+    const form = event.target;
+    const formData = new FormData(form);
+    const msgBox = document.getElementById("resultMsg");
+
+    // Clear old messages
+    msgBox.innerHTML = "";
+
+    try {
+        // 1️⃣ Submit clothing data to API
+        const response = await fetch("/api/add-clothing", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+        console.log(result);
+        if (response.ok && result.clothing_id) {
+            msgBox.innerHTML = `<span class="text-success">${result.message}</span>`;
+
+            // 2️⃣ Redirect to render_insights AFTER storing clothing in DB
+            window.location.href = `/render_insights?clothing_id=${result.clothing_id}&user_id=${result.user_id}`;
+        } else {
+            msgBox.innerHTML = `<span class="text-danger">${result.error || "Upload failed."}</span>`;
+        }
+    } catch (err) {
+        console.error("Error:", err);
+        msgBox.innerHTML = `<span class="text-danger">Something went wrong. Please try again later.</span>`;
+    }
+});
+
+
+</script>
+{% endblock %}
